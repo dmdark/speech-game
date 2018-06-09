@@ -5,9 +5,9 @@ require('../vendor/autoload.php');
 use Dotenv\Dotenv;
 use Symfony\Component\HttpFoundation\Request;
 
-$dotenv = new Dotenv(__DIR__);
+$dotenv = new Dotenv(dirname(__DIR__));
 $dotenv->load();
-$dotenv->required(['DB_HOST', 'DB_USER', 'DB_PASS', 'DB_NAME']);
+$dotenv->required(['DB_HOST', 'DB_USER', 'DB_PASSWORD', 'DB_NAME']);
 
 $app = new Silex\Application();
 $app['debug'] = getenv('DEBUG');

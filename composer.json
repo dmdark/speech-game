@@ -2,6 +2,7 @@
   "require" : {
     "silex/silex": "^2.0.4",
     "monolog/monolog": "^1.22",
-    "jdesrosiers/silex-cors-provider": "~1.0"
+    "jdesrosiers/silex-cors-provider": "~1.0",
+    "vlucas/phpdotenv": "^2.4"
   }
 }
