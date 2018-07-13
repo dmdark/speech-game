@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Super game sample</title>
+    <script src="https://unpkg.com/penpal/dist/penpal.min.js"></script>
+    <script>
+        const VimboxAPI = {
+            api: null,
+            init: function () {
+                const self = this;
+                Penpal.connectToParent({
+                    // Methods child is exposing to parent
+                    methods: {
+                        dataRestored(json) {
+                            console.log("child datarestored", json);
+                            setTimeout(() => {
+                                updateState(json);
+                            }, 1000);
+                        },
+                        userInfoUpdated(json) {
+                            console.log("child userInfoUpdated", json);
+                            updateUserInfo(json);
+                        },
+                    }
+                }).promise.then(parent => {
+                    self.api = parent;
+                });
+            },
+            setScore: function (score, completeness) {
+                if (!this.api) {
+                    console.error("Vimbox API not ready");
+                    return;
+                }
+                this.api.setScore(score, completeness);
+            },
+            setData: function (data) {
+                if (!this.api) {
+                    console.error("Vimbox API not ready");
+                    return;
+                }
+                this.api.setData(data);
+            }
+        };
+
+        document.addEventListener("DOMContentLoaded", function () {
+            VimboxAPI.init();
+        });
+
+        let globalGameState = {};
+        let userInfo = {};
+
+        function updateUserInfo(data) {
+            userInfo = data;
+        }
+
+        function setScore(scorePercent, completeness) {
+            VimboxAPI.setScore(scorePercent, completeness);
+        }
+
+        function updateState(newState) {
+            globalGameState = newState;
+            document.getElementById("state").innerHTML = JSON.stringify(newState);
+        }
+
+        function updateStateAndStore(newData) {
+            updateState(newData);
+            VimboxAPI.setData(newData);
+        }
+
+
+    </script>
+</head>
+<body>
+
+
+<fieldset style="width: 150px;">
+    <legend>Score changers</legend>
+    <button onclick="setScore(100, 100)">100 / 100</button>
+    <button onclick="setScore(60, 100)">60 / 100</button>
+    <button onclick="setScore(100, 50)">100 / 50</button>
+    <button onclick="setScore(10, 50)">10 / 50</button>
+    <button onclick="setScore(0, 0)">0 / 0</button>
+</fieldset>
+
+<fieldset style="width: 150px;">
+    <legend>State changer</legend>
+    <input type="text"
+           onchange="updateStateAndStore({
+                value: this.value,
+                timestamp: new Date().getTime(),
+                score: Math.round(Math.random() * 100)
+           })">
+    <div>
+        State:
+        <div id="state">554545</div>
+    </div>
+</fieldset>
+
+</body>
+</html>
